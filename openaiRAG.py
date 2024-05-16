@@ -12,16 +12,17 @@ from langchain_community.document_loaders import ImageCaptionLoader
 from langchain_community.docstore.document import Document
 import os
 import openai
+from dotenv import load_dotenv
+load_dotenv()
 
 # Chat UI title
 st.header("Upload your own files and ask questions like ChatGPT")
-st.subheader('File types supported: PDF/DOCX/TXT')
+st.subheader('File types supported: IMG/PDF/DOCX/TXT')
 
 # File uploader in the sidebar on the left
 with st.sidebar:
     # Input for OpenAI API Key
-    openai_api_key = st.text_input("OpenAI API Key", type="password",
-                                   value="sk-proj-6YlwHYkJT1Hb1lBC8ZQ3T3BlbkFJWaDKZrX01aQIOTrHQRKo")
+    openai_api_key = st.text_input("OpenAI API Key", type="password", value=os.getenv("OPENAI_API_KEY"))
 
     # Check if OpenAI API Key is provided
     if not openai_api_key:
@@ -58,22 +59,26 @@ if uploaded_files:
 
     # Load the data and perform preprocessing only if it hasn't been loaded before
     if "processed_data" not in st.session_state:
-        # Load the data from uploaded files
-        documents = []
-
         if uploaded_files:
+            # Load the data from uploaded files
+            documents = []
             for uploaded_file in uploaded_files:
                 # Get the full file path of the uploaded file
-                file_path = os.path.join(os.getcwd() + "/archive/" + uploaded_file.name)
-
+                file_path = os.path.join(os.getcwd() + "/archive/uploaded_file")
+                if not os.path.exists(file_path):
+                    # os.rmdir(file_path)
+                    os.mkdir(file_path)
+                file_path += "/" + uploaded_file.name
+                if os.path.exists(file_path):
+                    os.remove(file_path)
                 # Save the uploaded file to disk
                 with open(file_path, "wb") as f:
                     f.write(uploaded_file.getvalue())
                 # Check if the file is an image
                 if file_path.endswith((".png", ".jpg")):
                     # Use ImageCaptionLoader to load the image file
-                    image_loader = ImageCaptionLoader(path_images=[file_path])
-
+                    # image_loader = ImageCaptionLoader(images=file_path)
+                    image_loader = UnstructuredFileLoader(file_path=file_path)
                     # Load image captions
                     image_documents = image_loader.load()
 
@@ -87,12 +92,11 @@ if uploaded_files:
                     else:
                         loader = UnstructuredFileLoader(file_path)
                     loaded_documents = loader.load()
-
-                # Extend the main documents list with the loaded documents
-                documents.extend(loaded_documents)
+                    # Extend the main documents list with the loaded documents
+                    documents.extend(loaded_documents)
 
                 # Chunk the data, create embeddings, and save in vectorstore
-                text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
+                text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=150)
                 document_chunks = text_splitter.split_documents(documents)
 
                 embeddings = OpenAIEmbeddings()

@@ -1,7 +1,7 @@
-import csv
 import zipfile
 import os
-import pdfplumber
+import shutil
+from pdf2image import convert_from_path
 
 
 def extract_files(source_location=None, destination_location=None):
@@ -17,3 +17,19 @@ def extract_files(source_location=None, destination_location=None):
     res = "Files extracted successfully to " + destination_location
     return res
 
+
+def pdf_to_jpg(file_path, output_dir):
+    # Create output directory
+    output_dir += "/"+(file_path.split('/')[-1]).split('.')[0]
+    if os.path.exists(output_dir):
+        # Remove output directory and its contents
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir)
+
+    # Convert PDF to images
+    images = convert_from_path(file_path)
+
+    # Save images as JPG files
+    for i, image in enumerate(images):
+        image_path = os.path.join(output_dir, f"page_{i + 1}.jpg")
+        image.save(image_path, "JPEG")
