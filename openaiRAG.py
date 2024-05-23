@@ -5,9 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import ConversationalRetrievalChain
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
-from langchain_community.document_loaders import UnstructuredFileLoader
-from langchain_community.document_loaders.pdf import UnstructuredPDFLoader
-from langchain_community.document_loaders.image import UnstructuredImageLoader
+from langchain_community.document_loaders import UnstructuredFileLoader, UnstructuredPDFLoader, UnstructuredImageLoader
 from langchain_community.document_loaders import ImageCaptionLoader
 from langchain_community.docstore.document import Document
 import os
@@ -44,7 +42,8 @@ def load_version_history():
 
 # Sidebar section for uploading files and providing a YouTube URL
 with st.sidebar:
-    uploaded_files = st.file_uploader("Please upload your files", accept_multiple_files=True, type=None)
+    uploaded_files = st.file_uploader("Please upload your files", accept_multiple_files=True,
+                                      type=[".pdf", ".png", ".jpg", ".docx"])
     # youtube_url = st.text_input("YouTube URL")
 
     # Create an expander for the version history in the sidebar
@@ -78,7 +77,7 @@ if uploaded_files:
                 if file_path.endswith((".png", ".jpg")):
                     # Use ImageCaptionLoader to load the image file
                     # image_loader = ImageCaptionLoader(images=file_path)
-                    image_loader = UnstructuredFileLoader(file_path=file_path)
+                    image_loader = UnstructuredImageLoader(file_path=file_path)
                     # Load image captions
                     image_documents = image_loader.load()
 
@@ -109,9 +108,10 @@ if uploaded_files:
                 }
 
     else:
-        # If the processed data is already available, retrieve it from session state
-        document_chunks = st.session_state.processed_data["document_chunks"]
-        vectorstore = st.session_state.processed_data["vectorstore"]
+        print("Document is not loaded")
+    # If the processed data is already available, retrieve it from session state
+    document_chunks = st.session_state.processed_data["document_chunks"]
+    vectorstore = st.session_state.processed_data["vectorstore"]
 
     # Initialize Langchain's QA Chain with the vectorstore
     qa = ConversationalRetrievalChain.from_llm(llm, vectorstore.as_retriever())
