@@ -8,9 +8,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-input/
-output/
 archive/
+chroma/
 attachments/
 build/
 develop-eggs/
