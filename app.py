@@ -1,4 +1,4 @@
-import awsgi
+# import awsgi
 from flask import Flask, jsonify, request
 from readEmail import read_email_data
 from openaiRAG import generate_content_from_documents
@@ -29,8 +29,8 @@ def generate_data():
     return response, 200
 
 
-def lambda_handler(event, context):
-    return awsgi.response(app, event, context, base64_content_types={"image/png"})
+# def lambda_handler(event, context):
+#     return awsgi.response(app, event, context, base64_content_types={"image/png"})
 
 
 if __name__ == '__main__':
