@@ -60,7 +60,11 @@ def load_documents(submission_id=None):
         # local_dir = './archive/temp'
         # download_directory_from_s3(bucket_name=S3_bucket, prefix=submission_id, local_dir=local_dir)
         # loader = DirectoryLoader(path=local_dir)
-        loader = S3DirectoryLoader(S3_bucket, prefix=submission_id)
+        # chroma_path = f"chroma/{submission_id}"
+        # # Clear out the database first.
+        # if os.path.exists(chroma_path):
+        #     return
+        loader = S3DirectoryLoader(S3_bucket, prefix="input/"+submission_id)
         documents = loader.load()
         return documents
     except Exception as e:
@@ -70,7 +74,7 @@ def load_documents(submission_id=None):
 
 def split_text(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=10000,
+        chunk_size=5000,
         chunk_overlap=100,
         length_function=len,
         add_start_index=True,
@@ -96,6 +100,8 @@ def save_to_chroma(chunks: list[Document], submission_id=None):
 def generate_data_store(submission_id=None):
     try:
         documents = load_documents(submission_id=submission_id)
+        if not documents:
+            return True
         chunks = split_text(documents=documents)
         save_to_chroma(chunks=chunks, submission_id=submission_id)
         return True

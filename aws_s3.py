@@ -22,7 +22,8 @@ def upload_file_to_s3(submission_id=None, filename=None, content=None):
     try:
         # file = f"./static/uploads/{submission_id}_input.xlsx"
         # s3_client.upload_file(file, AWS_UNDERWRITER_BUCKET, f'{submission_id}_input.xlsx')
-        response = s3_client.put_object(Bucket=AWS_UNDERWRITER_BUCKET, Key=f"{submission_id}/{filename}", Body=content)
+        response = s3_client.put_object(Bucket=AWS_UNDERWRITER_BUCKET, Key=f"input/{submission_id}/{filename}",
+                                        Body=content)
         status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
         url = f"https://{AWS_UNDERWRITER_BUCKET}.s3.amazonaws.com/{submission_id}/{filename}"
         if status == 200:

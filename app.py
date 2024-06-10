@@ -1,5 +1,4 @@
-# import awsgi
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from readEmail import read_email_data
 from openaiRAG import generate_content_from_documents
 
@@ -9,7 +8,7 @@ app = Flask(__name__)
 # Route for the home page
 @app.route('/')
 def home():
-    return jsonify(message="Connection Successful"), 200
+    return render_template("index.html")
 
 
 # Route to return a JSON response
@@ -19,18 +18,22 @@ def get_data():
     if submission_id:
         return jsonify(submission_id), 200
     else:
-        return jsonify({"message": "No email received"}), 200
+        return jsonify({"message": "No email received"}), 400
 
 
 @app.route('/api/generate_data', methods=['GET'])
 def generate_data():
-    submission_id = request.form.get("submission_id")
-    response = generate_content_from_documents(submission_id=submission_id)
-    return response, 200
-
-
-# def lambda_handler(event, context):
-#     return awsgi.response(app, event, context, base64_content_types={"image/png"})
+    submission_id = get_data()
+    if not submission_id:
+        return render_template('index.html', message="No Email Received.")
+    try:
+        submission_id = request.form.get("submission_id")
+        response = generate_content_from_documents(submission_id=submission_id)
+        if not response:
+            return render_template('index.html', message="No Files found")
+        return render_template('index.html', response=response, message="Files extracted successfully")
+    except:
+        return "Unable to generate response", 400
 
 
 if __name__ == '__main__':

@@ -29,9 +29,7 @@ Answer the question based on the above context : {question}
 def generate_content_from_documents(submission_id=None):
     response = generate_data_store(submission_id=submission_id)
     if not response:
-        return {
-            "response": "No Document found please try again"
-        }, 200
+        return None
     query_text = '''extract all the details in json format '''
     chroma_path = f"./chroma/{submission_id}/"
     # Prepare the DB.
@@ -41,7 +39,7 @@ def generate_content_from_documents(submission_id=None):
     # Search the DB.
     results = db.similarity_search_with_relevance_scores(query_text, k=3)
     if len(results) == 0 or results[0][1] < 0.5:
-        return {"response": "No details found from the document"}
+        return None
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
@@ -61,7 +59,7 @@ def generate_content_from_documents(submission_id=None):
         "sources": formatted_source,
         "date": datetime.now().date().strftime("%Y-%m-%d")
     })
-    # s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=formatted_response)
+    s3.put_object(Bucket=aws_bucket, Key=f"output/{submission_id}.json", Body=response_text)
     if response_text is not None:
         return formatted_response
     return None
