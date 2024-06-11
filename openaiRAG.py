@@ -54,12 +54,15 @@ def generate_content_from_documents(submission_id=None):
         formatted_url = f"https://{aws_bucket}.s3.amazonaws.com/{url}"
         if formatted_url not in formatted_source:
             formatted_source.append(formatted_url)
+
+    s3.put_object(Bucket=aws_bucket, Key=f"output/{submission_id}.json", Body=response_text)
+    url = f"https://{aws_bucket}.s3.amazonaws.com/output/{submission_id}.json"
     formatted_response = json.dumps({
         "response": response_text,
         "sources": formatted_source,
-        "date": datetime.now().date().strftime("%Y-%m-%d")
+        "date": datetime.now().date().strftime("%Y-%m-%d"),
+        "url": url
     })
-    s3.put_object(Bucket=aws_bucket, Key=f"output/{submission_id}.json", Body=response_text)
-    if response_text is not None:
-        return formatted_response
+    if url is not None:
+        return url
     return None

@@ -15,7 +15,7 @@
 {% if message %}
 <p>{{message}}</p>
 {% endif %}
-{% if output %}
+{% if response %}
 <a href={{response}} id="downloadBtn" class="btn btn-dark mt-3">Download Output</a>
 {% endif %}
 <script src="{{ url_for('static', filename='script.js') }}"></script>
