@@ -28,6 +28,8 @@ def read_email_data():
     try:
         # Get messages from server
         message_count = len(pop_conn.list()[1])
+        if message_count == 0:
+            return None
         submission_id = str(uuid.uuid4())
         for i in range(1, message_count + 1):
             # Retrieve message by ID

@@ -63,6 +63,6 @@ def generate_content_from_documents(submission_id=None):
         "date": datetime.now().date().strftime("%Y-%m-%d"),
         "url": url
     })
-    if url is not None:
-        return url
+    if response_text is not None:
+        return formatted_response
     return None

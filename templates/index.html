@@ -3,22 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Data Extraction</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>API Documentation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">-->
 </head>
 <body>
-<h1>API Data Extraction</h1>
-<form action="/api/generate_data" method="get">
-    <button id="extractBtn">Extract Data from Files</button>
-</form>
-{% if message %}
-<p>{{message}}</p>
-{% endif %}
-{% if response %}
-<a href={{response}} id="downloadBtn" class="btn btn-dark mt-3">Download Output</a>
-{% endif %}
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<div class="container my-2">
+    <h1 class="text-center my-2">Data Extraction API</h1>
+    <div class="row justify-content-around">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card mb-4 flex-fill">
+                <div class="card-body">
+                    <h2 class="card-title">Fetch Email Data</h2>
+                    <p><strong>URL:</strong> <code>{{host}}/api/fetch_email</code></p>
+                    <p><strong>Method:</strong> GET</p>
+                    <p><strong>Description:</strong> Fetches the email data.</p>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><strong>submission_id</strong> (required): The ID of the submission to generate data from.</li>
+                    </ul>
+                    <h3>Example Request:</h3>
+                    <pre class="bg-light p-3">GET /api/fetch_email</pre>
+                    <h3>Example Response:</h3>
+                    <pre class="bg-light p-3">{
+    "submission_id": "example_submission_id"
+}</pre>
+                    <p><strong>Response Codes:</strong></p>
+                    <ul>
+                        <li>200 - OK (Email data fetched successfully)</li>
+                        <li>400 - Bad Request (No email received)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card mb-4 flex-fill">
+                <div class="card-body">
+                    <h2 class="card-title">Generate Data</h2>
+                    <p><strong>URL:</strong> <code>{{host}}/api/generate_data</code></p>
+                    <p><strong>Method:</strong> GET</p>
+                    <p><strong>Description:</strong> Generates content from documents based on the provided submission ID.</p>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><strong>submission_id</strong> (required): The ID of the submission to generate data from.</li>
+                    </ul>
+                    <h3>Example Request:</h3>
+                    <pre class="bg-light p-3">GET /api/generate_data?submission_id=example_submission_id</pre>
+                    <h3>Example Response:</h3>
+                    <pre class="bg-light p-3">{
+    "generated_content": "example_generated_content"
+}</pre>
+                    <p><strong>Response Codes:</strong></p>
+                    <ul>
+                        <li>200 - OK (Data generated successfully)</li>
+                        <li>404 - Not Found (Submission ID not provided or data not found)</li>
+                        <li>500 - Internal Server Error (Unable to generate response)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom JS -->
+<!--<script src="{{ url_for('static', filename='script.js') }}"></script>-->
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
