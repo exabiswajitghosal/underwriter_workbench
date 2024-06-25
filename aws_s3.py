@@ -43,7 +43,15 @@ def list_folders():
         folders = [prefix['Prefix'] for prefix in response['CommonPrefixes']]
         # Remove the 'input/' prefix from folder names
         folders = [folder.replace('input/', '').replace('/', '') for folder in folders]
-        return folders
+        folders_list = []
+        for submission_id in folders:
+            input_files = list_files_in_folder(submission_id=submission_id)
+            folder = {
+                "submission_id": submission_id,
+                "input": input_files,
+            }
+            folders_list.append(folder)
+        return folders_list
     else:
         return []
 
@@ -52,12 +60,19 @@ def list_files_in_folder(submission_id=None):
     # List objects in the specified folder within the "input" directory of the bucket
     prefix = f'input/{submission_id}/'
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
-
     # Check if the response contains Contents which denotes the files
     if 'Contents' in response:
-        files = [content['Key'] for content in response['Contents']]
-        # Remove the 'input/{folder_name}/' prefix from file names
-        files = [file.replace(prefix, '') for file in files]
-        return files
+        files_list = []
+        for content in response['Contents']:
+            filename = content['Key'].replace(prefix, '')
+            url = f'https://{bucket_name}.s3.amazonaws.com/{content["Key"]}'
+            last_modified = content['LastModified'].strftime('%Y-%m-%d %H:%M:%S')
+            file_details = {
+                "file_name": filename,
+                "url": url,
+                "last_modified": last_modified
+            }
+            files_list.append(file_details)
+        return files_list
     else:
         return []
