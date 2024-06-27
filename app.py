@@ -32,10 +32,11 @@ def get_data():
 @app.route('/api/generate_data', methods=['GET'])
 def generate_data():
     submission_id = request.args.get("submission_id")
-    if not submission_id:
-        return jsonify({"message": "Please Provide Submission Id"}), 404
+    file_name = request.args.get("file_name")
+    if not submission_id or not file_name:
+        return jsonify({"message": "Please Provide submission_id or file_name"}), 404
     try:
-        response = generate_content_from_documents(submission_id=submission_id)
+        response = generate_content_from_documents(submission_id=submission_id, file_name=file_name)
         if not response:
             return jsonify({"message": "No Data Found From the files"}), 200
         return response, 200
