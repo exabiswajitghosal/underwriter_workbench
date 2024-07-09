@@ -1,6 +1,7 @@
 import os
-import boto3
 from dotenv import load_dotenv
+import boto3
+from botocore.exceptions import ClientError
 
 load_dotenv()
 
@@ -76,3 +77,18 @@ def list_files_in_folder(submission_id=None):
         return files_list
     else:
         return []
+
+
+def check_document_exists(S3_bucket, prefix, key):
+    s3 = boto3.client('s3')
+    full_key = f"{prefix}/{key}"
+    try:
+        s3.head_object(Bucket=S3_bucket, Key=full_key)
+        print(f"Document exists: {S3_bucket}/{full_key}")
+        return True
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            print(f"Document not found: {S3_bucket}/{full_key}")
+        else:
+            print("An error occurred:", e.response['Error']['Message'])
+        return False

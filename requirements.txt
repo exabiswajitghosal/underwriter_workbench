@@ -7,9 +7,10 @@ chromadb~=0.3.29
 langchain-openai
 boto3~=1.34.66
 openai~=1.14.2
-langchain
+langchain~=0.2.6
 unstructured
 unstructured[pdf]
 pikepdf
 requests~=2.31.0
 Flask-Cors
+botocore~=1.34.133
