@@ -47,11 +47,8 @@ def list_folders():
         folders_list = []
         for submission_id in folders:
             input_files = list_files_in_folder(submission_id=submission_id)
-            folder = {
-                "submission_id": submission_id,
-                "input": input_files,
-            }
-            folders_list.append(folder)
+            for files in input_files:
+                folders_list.append(files)
         return folders_list
     else:
         return []
@@ -69,6 +66,7 @@ def list_files_in_folder(submission_id=None):
             url = f'https://{bucket_name}.s3.amazonaws.com/{content["Key"]}'
             last_modified = content['LastModified'].strftime('%Y-%m-%d %H:%M:%S')
             file_details = {
+                "submission_id": submission_id,
                 "file_name": filename,
                 "url": url,
                 "last_modified": last_modified
