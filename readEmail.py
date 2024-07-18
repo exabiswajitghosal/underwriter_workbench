@@ -59,15 +59,17 @@ def read_email_data():
                         url = upload_file_to_s3(submission_id=submission_id, filename=filename,
                                                 content=part.get_payload(decode=True))
                         print(url)
-                elif content_type == 'text/plain' and 'attachment' not in content_disposition:
-                    filename = str(submission_id) + "_body.txt"
-                    body = part.get_payload(decode=True).decode('utf-8')
-                    upload_file_to_s3(submission_id=submission_id, filename=filename, content=body)
-                    print("Body:", body)
+                    elif content_type == 'text/plain' and 'attachment' not in content_disposition:
+                        filename = str(submission_id) + "_body.txt"
+                        body = part.get_payload(decode=True).decode('utf-8')
+                        if len(body) > 0:
+                            upload_file_to_s3(submission_id=submission_id, filename=filename, content=body)
+                            print("Body:", body)
+                        else:
+                            print("Body is empty, not uploading.")
 
         # Close connection
         pop_conn.quit()
         return submission_id
     except:
         return None
-
