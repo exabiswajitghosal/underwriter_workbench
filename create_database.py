@@ -35,11 +35,6 @@ def load_documents(submission_id, file_name):
         loader = S3FileLoader(bucket=S3_bucket, key=file_path)
         documents = loader.load()
         return documents
-
-        # file_object = s3_client.get_object(Bucket=S3_bucket, Key="input/"+submission_id+"/"+file_name)
-        # file_content = file_object['Body'].read()
-        # print(file_content)
-        # return file_content
     except Exception as e:
         print("Unable to load documents.", e)
         return None

@@ -31,7 +31,7 @@ def generate_content_from_documents(submission_id, file_name):
     if not response:
         return None
     query_text = '''extract all the details in json format '''
-    chroma_path = f"./chroma/{submission_id}/{file_name}"
+    chroma_path = f"./chroma/{submission_id}/{file_name.split('.')[0]}"
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
     db = Chroma(persist_directory=chroma_path, embedding_function=embedding_function)
