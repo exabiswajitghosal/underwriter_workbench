@@ -27,11 +27,13 @@ Answer the question based on the above context : {question}
 
 
 def generate_content_from_documents(submission_id, file_name):
+
     response = generate_data_store(submission_id=submission_id, file_name=file_name)
     if not response:
         return None
+    file_name = file_name.split('.')[0]
     query_text = '''extract all the details in json format '''
-    chroma_path = f"./chroma/{submission_id}/{file_name.split('.')[0]}"
+    chroma_path = f"./chroma/{submission_id}/{file_name}"
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
     db = Chroma(persist_directory=chroma_path, embedding_function=embedding_function)
@@ -55,8 +57,8 @@ def generate_content_from_documents(submission_id, file_name):
         if formatted_url not in formatted_source:
             formatted_source.append(formatted_url)
 
-    s3.put_object(Bucket=aws_bucket, Key=f"output/{submission_id}.json", Body=response_text)
-    url = f"https://{aws_bucket}.s3.amazonaws.com/output/{submission_id}/{file_name}_output.json"
+    s3.put_object(Bucket=aws_bucket, Key=f"{submission_id}/output/{file_name}_output.json", Body=response_text)
+    url = f"https://{aws_bucket}.s3.amazonaws.com/{submission_id}/output/{file_name}_output.json"
     formatted_response = json.dumps({
         "response": response_text,
         "sources": formatted_source,

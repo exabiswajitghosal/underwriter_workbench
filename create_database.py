@@ -27,11 +27,11 @@ s3_client = session.client('s3')
 
 def load_documents(submission_id, file_name):
     try:
-        document_exist = check_document_exists(S3_bucket=S3_bucket, prefix="input/"+submission_id, key=file_name)
+        document_exist = check_document_exists(S3_bucket=S3_bucket, prefix=submission_id+"/input", key=file_name)
         if not document_exist:
             return None
         # loader = S3DirectoryLoader(bucket=S3_bucket, prefix="input/"+submission_id)
-        file_path = "input/"+submission_id+"/"+file_name
+        file_path = submission_id+"/"+"input/"+file_name
         loader = S3FileLoader(bucket=S3_bucket, key=file_path)
         documents = loader.load()
         return documents
@@ -42,7 +42,7 @@ def load_documents(submission_id, file_name):
 
 def split_text(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=5000,
+        chunk_size=10000,
         chunk_overlap=100,
         length_function=len,
         add_start_index=True,

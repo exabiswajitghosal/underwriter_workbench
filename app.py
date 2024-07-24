@@ -24,7 +24,7 @@ def home():
 def get_data():
     submission_id = read_email_data()
     if submission_id:
-        return jsonify(submission_id), 200
+        return jsonify({"submission_id": submission_id}), 200
     else:
         return jsonify({"message": "No email received"}), 400
 
