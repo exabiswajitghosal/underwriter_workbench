@@ -45,7 +45,7 @@ def generate_content_from_documents(submission_id, file_name):
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
-    model = ChatOpenAI()
+    model = ChatOpenAI(model="gpt-4o")
     response_text = model.predict(prompt)
     sources = [doc.metadata.get("source", None) for doc, _score in results]
     if not response_text:

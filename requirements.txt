@@ -14,3 +14,4 @@ pikepdf
 requests~=2.31.0
 Flask-Cors
 botocore~=1.34.133
+pdf2image~=1.17.0
