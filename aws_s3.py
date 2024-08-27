@@ -22,8 +22,6 @@ s3_client = session.client('s3')
 
 def upload_file_to_s3(submission_id=None, filename=None, content=None):
     try:
-        # file = f"./static/uploads/{submission_id}_input.xlsx"
-        # s3_client.upload_file(file, AWS_UNDERWRITER_BUCKET, f'{submission_id}_input.xlsx')
         response = s3_client.put_object(Bucket=bucket_name, Key=f"{submission_id}/input/{filename}",
                                         Body=content)
         status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
@@ -57,7 +55,6 @@ def list_folders():
 
 def list_files_in_folder(submission_id=None):
     # List objects in the specified folder within the "input" directory of the bucket
-    # prefix = f'input/{submission_id}/'
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=submission_id+"/input")
     # Check if the response contains Contents which denotes the files
     if 'Contents' in response:

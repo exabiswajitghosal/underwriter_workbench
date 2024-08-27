@@ -1,4 +1,4 @@
-from langchain_community.document_loaders import S3DirectoryLoader, S3FileLoader
+from langchain_community.document_loaders import S3FileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 from langchain_openai import OpenAIEmbeddings
@@ -30,7 +30,6 @@ def load_documents(submission_id, file_name):
         document_exist = check_document_exists(S3_bucket=S3_bucket, prefix=submission_id+"/input", key=file_name)
         if not document_exist:
             return None
-        # loader = S3DirectoryLoader(bucket=S3_bucket, prefix="input/"+submission_id)
         file_path = submission_id+"/"+"input/"+file_name
         loader = S3FileLoader(bucket=S3_bucket, key=file_path)
         documents = loader.load()
